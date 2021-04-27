@@ -1,3 +1,5 @@
+# GETTING STARTED
+
 ## PART1- Dockerizing the MongoDB Service
 
 ```bash
@@ -6,22 +8,6 @@ $ docker run --name mongodb --rm -d -p 27017:27017 mongo
 $ sudo node app.js  # run the node app locally
 $ docker logs mongdb # check connection
 # "'Node.js v15.11.0, LE (unified)","version":"3.6.1|5.10.3"
-
-# step2: use networks in order to connect containerized nodeapp to containerized mongodb
-$ docker network ls
-$ docker network create fullstack-webapp-network
-$ docker run --name mongodb --rm -d --network fullstack-webapp-network mongo
-
-# step3: use volumes and environment variables
-## FULL-FINAL VERSION
-$
-docker run --name mongodb \
--v data:/data/db \
---rm -d \
---network fullstack-webapp-network \
--e MONGO_INITDB_ROOT_USERNAME=buraku \
--e MONGO_INITDB_ROOT_PASSWORD=password \
-mongo
 ```
 
 ## PART2- Dockerizing the Node App
@@ -45,10 +31,38 @@ $ docker build -t node-app-image .
 # step2:
 $ docker run --name node-backend --rm -d -p 80:80 node-app-image
 
-# step3: use networks in order to connect containerized nodeapp to containerized mongodb
-# step4: use volumes and environment variables
+```
 
-#FULL VERSION
+## PART3- Dockerizing the React App
+
+```bash
+$ docker build -t react-app-image .
+## REACT Apps will require -it flag
+$ docker run --name goals-frontend --rm -d -p 3000:3000 -it react-app-image
+```
+
+# DOCKER NETWORKS
+
+So far all communication is possible through localhost machine by publishing ports, there's no cross container communication yet
+
+```bash
+# use networks in order to connect containerized node-app to containerized mongodb
+$ docker network ls
+$ docker network create fullstack-webapp-network
+$ docker run --name mongodb --rm -d --network fullstack-webapp-network mongo
+# use volumes and environment variables
+## FULL-FINAL VERSION MONGODB
+$ docker run --name mongodb \
+-v data:/data/db \
+--rm -d \
+--network fullstack-webapp-network \
+-e MONGO_INITDB_ROOT_USERNAME=buraku \
+-e MONGO_INITDB_ROOT_PASSWORD=password \
+mongo
+
+# use networks in order to connect containerized node-app to containerized mongodb
+# use volumes and environment variables
+## FULL-FINAL VERSION NODE-BACKEND
 $
 docker run --name node-backend \
 -v logs:/app/logs \
@@ -57,9 +71,10 @@ docker run --name node-backend \
 -e MONGODB_USERNAME=buraku \
 -e MONGODB_PASSWORD=password \
 --rm -d \
---network web-app-network \
+--network fullstack-webapp-network \
 -p 80:80 \
 node-app-image
+
 ```
 
 ### Appendix
@@ -75,3 +90,6 @@ sudo ln -s /home/ec2-user/.nvm/versions/node/v8.11.3/bin/npm /usr/bin/npm
 ```
 
 [Amazon EC2 Error: listen EACCES 0.0.0.0:80](https://stackoverflow.com/questions/51020596/amazon-ec2-error-listen-eacces-0-0-0-080)
+
+[What is linux equivalent of “host.docker.internal”](https://stackoverflow.com/questions/48546124/what-is-linux-equivalent-of-host-docker-internal)
+[Support '--add-host=host.docker.internal:host-gateway](https://github.com/containers/podman/issues/8466)
