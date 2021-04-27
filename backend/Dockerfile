@@ -6,8 +6,9 @@ COPY --chown=node:node ./package.json ./
 RUN npm install
 COPY --chown=node:node ./ ./
 EXPOSE 80
-# ENV MONGODB_USERNAME=default-username
-# ENV MONGODB_PASSWORD=default-passoword
+ENV MONGODB_USERNAME=default-username
+ENV MONGODB_PASSWORD=default-passoword
 
-CMD [ "node", "app.js" ]
-# CMD ["npm", "start"]
+# CMD [ "node", "app.js" ]
+# with nodemon 
+CMD ["npm", "start"]
