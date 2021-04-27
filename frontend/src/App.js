@@ -111,6 +111,7 @@ function App() {
       {!isLoading && (
         <CourseGoals goals={loadedGoals} onDeleteGoal={deleteGoalHandler} />
       )}
+      <h2>live updates on code... </h2>
     </div>
   );
 }
