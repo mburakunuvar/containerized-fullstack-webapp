@@ -1,14 +1,14 @@
 version: "3.8"
 services:
   mongodb:
-    name: mongodb
+    container_name: mongodb
     image: "mongo"
     volumes:
       - data:/data/db
     env_file:
       - ./env/mongo-db.env
   node-backend:
-    name: node-backend
+    container_name: node-backend
     build: ./backend
     ports:
       - "80:80"
@@ -20,17 +20,26 @@ services:
       - ./env/node-backend.env
     depends_on:
       - mongodb
-  react-frontend:
-    name: react-frontend
+  # react-frontend:
+  #   container_name: react-frontend
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile-dev
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./frontend/src:/home/node/app/src
+  #   stdin_open: true
+  #   tty: true
+  #   depends_on:
+  #     - node-backend
+  nginx-frontend:
+    container_name: nginx-frontend
     build: ./frontend
     ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend/src:/app/src
-    stdin_open: true
-    tty: true
+      - "3000:80"
     depends_on:
-      - backend
+      - node-backend
 volumes:
   data:
   logs:

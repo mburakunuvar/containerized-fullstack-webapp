@@ -241,24 +241,6 @@ volumes:
   logs:
 ```
 
-## Docker-Compose Commands
-
-```bash
-$ docker-compose up
-$ docker-compose up -d
-# automatically will be removed thus no need for -rm
-$ docker-compose down
-# in order to remove volumes
-$ docker-compose down -v
-# force to rebuild ( not to re-use prebuilt one )
-$ docker-compose up --build
-# to rebuild only custom images and then to run
-$ docker-compose build
-# there will be no re-built
-$ docker-compose run
-$ docker-compose --help
-```
-
 ## PART3-C Docker-Compose for React-Frontend Container
 
 - interactive mode is required for dockerized react apps, thus we need to include `-it` flag
@@ -279,10 +261,47 @@ services:
       - backend
 ```
 
-# USING MULTI-BUILD CONTAINERS
+## Docker-Compose Commands
 
+```bash
+$ docker-compose up
+$ docker-compose up -d
+# automatically will be removed thus no need for -rm
+$ docker-compose down
+# in order to remove volumes
+$ docker-compose down -v
+# force to rebuild ( not to re-use prebuilt one )
+$ docker-compose up --build
+# to rebuild only custom images and then to run
+$ docker-compose build
+# there will be no re-built
+$ docker-compose run
+$ docker-compose --help
 ```
 
+# USING MULTI-STAGE BUILDS
+
+So far we've used the development server of react test environment which could be replaced with an NGINX server in production.
+
+- Update Dockerfile for react-frontend (replace previous as Dockerfile-dev)
+
+```Dockerfile
+FROM node:alpine as builder
+...
+FROM nginx
+COPY --from=builder /home/node/app/build /usr/share/nginx/html
+```
+
+- Update docker-compose to replace react-frontend by nginx-frontend
+
+```yaml
+nginx-frontend:
+  container_name: nginx-frontend
+  build: ./frontend
+  ports:
+    - "3000:80"
+  depends_on:
+    - node-backend
 ```
 
 ### Appendix
