@@ -302,6 +302,11 @@ nginx-frontend:
 
 - This is not needed for react environment as it's a built in feature.
 
+### GETTING READY FOR PRODUCTION 
+
+We'll no more be able to use the adventages of Docker Networks & docker-compose in production, as we'll need various
+URLs for DB Connections. Thus it's also a best practice to use an environment variable for DB Connection. 
+
 ### Appendix
 
 [Setting Up Node.js on an Amazon EC2 Instance](https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/setting-up-node-on-ec2-instance.html)
